@@ -1,13 +1,12 @@
 using EShop.Application.Service;
 using EShop.Application.Services;
 using EShop.Domain.Repositories;
-using EShop.Domain.Seeders;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Security.Cryptography;
-
+using System.Text;
 namespace EShopService
 {
     public class Program
@@ -17,14 +16,21 @@ namespace EShopService
             var builder = WebApplication.CreateBuilder(args);
 
 
-            builder.Services.AddDbContext<DataContext>(x => x.UseInMemoryDatabase("TestDb"), ServiceLifetime.Transient);
-            builder.Services.AddScoped<IRepository, Repository>();
+            builder.Services.AddDbContext<DataContext>(options =>
+            {
+                var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+                options.UseSqlServer(connectionString);
+            });
+
 
 
             // Add services to the container.
             builder.Services.AddScoped<ICreditCardService, CreditCardService>();
-            builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddScoped<IAdminConcertRepository, AdminConcertRepository>();
+            builder.Services.AddScoped<IAdminConcertService, AdminConcertService>();
 
+            builder.Services.AddScoped<IConcertService, ConcertService>();
+            builder.Services.AddScoped<IConcertRepository, ConcertRepository>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -63,6 +69,10 @@ namespace EShopService
 
 
 
+            builder.Services.AddMemoryCache();
+            var jwtSettings = builder.Configuration.GetSection("Jwt");
+            var key = Encoding.UTF8.GetBytes(jwtSettings["Key"]);
+
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -70,34 +80,20 @@ namespace EShopService
             })
             .AddJwtBearer(options =>
             {
-                var rsa = RSA.Create();
-                rsa.ImportFromPem(File.ReadAllText("../data/public.key"));
-                var publicKey = new RsaSecurityKey(rsa);
-
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = "EShopNetCourse",
-                    ValidAudience = "Eshop",
-                    IssuerSigningKey = publicKey
+
+                    ValidIssuer = jwtSettings["Issuer"],
+                    ValidAudience = jwtSettings["Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(key)
                 };
             });
 
-
-            builder.Services.AddScoped<IEShopSeeder, EShopSeeder>();
-            builder.Services.AddMemoryCache();
-
-            builder.Services.AddAuthorization(options =>
-            {
-                options.AddPolicy("AdminOnly", policy =>
-                    policy.RequireRole("Administrator"));
-                options.AddPolicy("EmployeeOnly", policy =>
-                    policy.RequireRole("Employee"));
-            });
-
+            builder.Services.AddAuthorization();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -114,11 +110,6 @@ namespace EShopService
 
 
             app.MapControllers();
-
-
-            var scope = app.Services.CreateScope();
-            var seeder = scope.ServiceProvider.GetRequiredService<IEShopSeeder>();
-            await seeder.Seed();
 
             app.Run();
         }
