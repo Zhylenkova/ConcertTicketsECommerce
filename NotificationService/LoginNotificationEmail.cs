@@ -26,7 +26,7 @@ public class LoginNotificationEmail
             string message)
     {
         _logger.LogInformation($"Odebrano wiadomoœæ z Kafki: {message}");
-        await SendEmailAsync("W³asnie sie zalogowales", "balsamb@uek.krakow.pl");
+        await SendEmailAsync("W³asnie sie zalogowales", "");
     }
         
     static async Task SendEmailAsync(string message, string toEmail)
@@ -44,7 +44,7 @@ public class LoginNotificationEmail
 
                 var mailMessage = new MailMessage
                 {
-                    From = new MailAddress("test@balsamski.pl"),
+                    From = new MailAddress(""),
                     Subject = "Wiadomoœæ z Kafki",
                     Body = message,
                     IsBodyHtml = false

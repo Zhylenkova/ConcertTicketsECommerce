@@ -18,17 +18,19 @@ namespace User.Application.Services
 
         public string Login(string username, string password)
         {
-            if (username == "admin" && password == "password")
-            {
+
+            //if (username == "admin" && password == "password")
+            //{
                 var roles = new List<string> { "Client", "Employee", "Administrator" };
                 var token = _jwtTokenService.GenerateToken(123, roles);
                 _userLoggedIdsQueue.Enqueue(123);
-                _kafkaProducer.SendMessageAsync("after-login-email-topic", "balsamb@uek.krakow.pl");
+                _kafkaProducer.SendMessageAsync("after-login-email-topic", "makaryshyna-js@harmony.ukr.education");
                 return token;
-            }else
-            {
-                throw new InvalidCredentialsException();
-            }
+            //}
+            //else
+            //{
+            //    throw new InvalidCredentialsException();
+            //}
 
         }
     }

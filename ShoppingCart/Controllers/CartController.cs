@@ -10,6 +10,12 @@ namespace ShoppingCart.Controllers
     {
 
         private readonly IMediator _mediator;
+
+        public CartController(IMediator mediator)
+        {
+            _mediator = mediator;
+        }
+
         [HttpPost("add-product")]
         public async Task<IActionResult> AddProductToCart([FromBody] AddProductToCartCommand command)
         {

@@ -6,7 +6,7 @@ using User.Domain.Models.Requests;
 
 namespace UserService.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/login")]
     [ApiController]
     public class LoginController : ControllerBase
     {
