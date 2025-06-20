@@ -20,7 +20,7 @@ public class LoginNotificationEmail
     [Function("KafkaTriggerFunction")]
     public async Task Run(
         [KafkaTrigger(
-                "kafka:9092",
+                "kafka:29092",
                 "after-login-email-topic",
                 ConsumerGroup = "function-consumer-group")]
             string message)

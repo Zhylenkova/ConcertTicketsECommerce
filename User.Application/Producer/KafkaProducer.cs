@@ -13,7 +13,7 @@ namespace User.Application.Producer
         {
             var config = new ProducerConfig
             {
-                BootstrapServers = "localhost:9092"
+                BootstrapServers = "localhost:29092"
             };
 
             _producer = new ProducerBuilder<Null, string>(config).Build();

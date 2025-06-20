@@ -1,4 +1,6 @@
-﻿using User.Application.Producer;
+﻿using Confluent.Kafka;
+using Microsoft.Extensions.Configuration;
+using User.Application.Producer;
 using User.Domain.Exceptions.Login;
 
 namespace User.Application.Services
@@ -33,5 +35,6 @@ namespace User.Application.Services
             //}
 
         }
+
     }
 }
