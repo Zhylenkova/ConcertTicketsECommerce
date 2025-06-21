@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.SqlServer;
 using PaymentService.Application.Interfaces;
 using PaymentService.Infrastructure.Clients;
-using PaymentService.Infrastructure.Data; // Add this using directive to resolve 'UseSqlServer'
+using PaymentService.Infrastructure.Data; 
 
 var builder = WebApplication.CreateBuilder(args);
 

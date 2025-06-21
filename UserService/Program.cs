@@ -49,7 +49,6 @@ builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddScoped<IUserService, User.Application.Services.UserService>();
 builder.Services.AddScoped<IKafkaProducer, KafkaProducer>();
-
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 
